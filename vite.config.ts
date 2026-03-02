@@ -1,32 +1,33 @@
-import tailwindcss from '@tailwindcss/vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
-import {defineConfig, loadEnv} from 'vite';
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
 
-export default defineConfig({
-  plugins: [react()],
-  base: '/', 
-})
+export default defineConfig(({ mode }) => {
+  // Carrega as variáveis de ambiente (.env)
+  const env = loadEnv(mode, process.cwd(), '');
 
-export default defineConfig(({mode}) => {
-  const env = loadEnv(mode, '.', '');
   return {
+    // Adicionei os plugins corretamente aqui
     plugins: [react(), tailwindcss()],
-    import { defineConfig } from 'vite'
+    
+    base: '/',
 
     define: {
+      // Define a chave da API para ser usada no projeto
+      // Certifique-se de que no seu .env o nome seja exatamente GEMINI_API_KEY
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
     },
+
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        // Ajustado para apontar para a raiz ou pasta src, conforme o padrão
+        '@': path.resolve(__dirname, './src'),
       },
     },
+
     server: {
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
+      // Desativa HMR se a variável DISABLE_HMR for true
       hmr: process.env.DISABLE_HMR !== 'true',
     },
   };
